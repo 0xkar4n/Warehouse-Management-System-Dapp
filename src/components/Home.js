@@ -93,7 +93,10 @@ export default function Home(){
     abi: fabi,
     functionName: 'create_wareshouse',
   })
-  const {data, isLoading, isSuccess, isError, write } = useContractWrite(config)
+  const {data, isError, isLoading,isSuccess, write } = useContractWrite(config)
+
+
+
 
  
  
@@ -118,15 +121,20 @@ export default function Home(){
 </div>
 
 
-    return<div>
-        <h2 className="text-center font-serif mt-6 ml-2px text-3xl font-extrabold leading-none tracking-tight text-blue-700 md:text-5xl lg:text-6xl dark:text-white "> Perissionless and Decentralized Warehouse <br></br>Management System</h2>
-        <h3 class="text-transparent text-left p-4 mb-4 text-3xl font-bold bg-clip-text bg-gradient-to-r to-blue-600 from-violet-600">Create and Manage Warehouse <br></br>anywhere in the world</h3>
-      
+
+    return<div className='bg-white-200 p-8 '>
         
+        
+        <h2 className="p-10 text-center font-serif text-3xl font-bold tracking-tight text-sky-500 sm:text-5xl "> Permissionless and Decentralized Warehouse <br></br>Management System</h2>
+        <h3 class="text-4xl mt-12 pl-5 font-semibold text-transparent bg-clip-text  bg-gradient-to-r to-sky-400 via-violet-400 from-blue-400">Create and Manage Warehouse  <br></br>Across the World</h3>
+        <p className="text-left mt-2 pl-5 text-gray-600  font-sherif ">
+            Explore the Blockchain world. Create and manage warehouses easily.
+          </p>
         <br>
         </br>
+      
         
-        <button  type="button" class="text-white pl-5 ml-8 text-left bg-sky-500 hover:bg-sky-600 font-medium rounded-lg text-sm px-5 py-2.5 " disabled={!write || isLoading} onClick={() => write?.()}>{isLoading ? 'Creating...' : 'Create Warehouse'}</button>
+        <button  type="button" class="text-white pl-5 ml-5 text-left bg-sky-500 hover:bg-sky-600 font-medium rounded-lg text-sm px-5 py-2.5 " disabled={!write || isLoading} onClick={() => write?.() } >{isLoading ? 'Creating...' : 'Create Warehouse'} </button>
         {isSuccess && (
         <div id="toast-success" class="absolute bottom-5 left-5 flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800" role="alert">
         <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200">
@@ -154,12 +162,22 @@ export default function Home(){
                  <span class="sr-only">Close</span>
                  <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
              </button>
+
+             
+
+
          </div>
      </div>
         )}
+
+      
+
+       
         
       
       <br></br>
+      
+     
     
     </div>
 }

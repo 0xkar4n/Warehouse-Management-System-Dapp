@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useContractWrite, usePrepareContractWrite } from 'wagmi'
+import { ToastContainer, toast } from 'react-toastify';
 import { useParams } from 'react-router-dom';
-import { useContract, utils, useAccount } from "wagmi";
+import { useAccount } from "wagmi";
 import Web3 from "web3";
-
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const Main = () => {
@@ -286,22 +286,16 @@ const Main = () => {
     }
   ];
  
-  
-
-  {/*const { addDataconfig } = usePrepareContractWrite({
-    address: contractAddress,
-    abi: cabi,
-    functionName: 'add_Data()',
-    args: ["colgate",512],
-  })
-const { write } = useContractWrite(addDataconfig)*/}
 
   
-  
-  const [manager, setManager] = useState('');
+  const [addstaff, setaddStaff] = useState("");
+  const [removestaff, setremoveStaff] = useState("");
+  const [addmanager, setaddManager] = useState("");
+  const [removemanager, setremoveManager] = useState("");
   const [account, setAccount] = useState(null);
   const [data, setData] = useState("");
   const [id, setId] = useState('');
+  const [rid, setrId] = useState('');
 
   const { address} = useAccount()
   
@@ -309,31 +303,56 @@ const { write } = useContractWrite(addDataconfig)*/}
   const contract = new web3.eth.Contract(cabi, childAddress);
   const handleAddData = async () => {
     try {
-      const accounts = await web3.eth.getAccounts();
+     
       await contract.methods.add_Data(data, id).send({ from: address });
-      <div id="toast-success" class="flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800" role="alert">
-    <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200">
-        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-        <span class="sr-only">Check icon</span>
-    </div>
-    <div class="ml-3 text-sm font-normal">Data Added successfully.</div>
-    <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700" data-dismiss-target="#toast-success" aria-label="Close">
-        <span class="sr-only">Close</span>
-        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-    </button>
-      </div>
+      
+      toast.success('Transaction successful!'
+        );
     } catch (error) {
+      console.log(error)
+      toast.error('Transaction failed!');
       
     }
   };
 
   const handleRemoveData = async () => {
     try {
-      const accounts = await web3.eth.getAccounts();
-      await contract.methods.remove_data( id).send({ from: address });
-     
+      await contract.methods.remove_data(rid).send({ from: address });
+      toast.success('Transaction successful!');
     } catch (error) {
-      
+      toast.error('Transaction failed!');
+    }
+  };
+  const handleaddManager = async () => {
+    try {
+      await contract.methods.add_manager( addmanager).send({ from: address });
+      toast.success('Transaction successful!');
+    } catch (error) {
+      toast.error('Transaction failed!');
+    }
+  };
+  const handleremoveManager = async () => {
+    try {
+      await contract.methods.remove_manager( removemanager).send({ from: address });
+      toast.success('Transaction successful!');
+    } catch (error) {
+      toast.error('Transaction failed!');
+    }
+  };
+  const handleaddStaff = async () => {
+    try {
+      await contract.methods.add_staff( addstaff).send({ from: address });
+      toast.success('Transaction successful!');
+    } catch (error) {
+      toast.error('Transaction failed!');
+    }
+  };
+  const handleremoveStaff = async () => {
+    try {
+      await contract.methods.remove_staff( removestaff).send({ from: address });
+      toast.success('Transaction successful!');
+    } catch (error) {
+      toast.error('Transaction failed!');
     }
   };
 
@@ -341,10 +360,12 @@ const { write } = useContractWrite(addDataconfig)*/}
   return (
     <div>
        
-        <h2>Welcome to {childAddress}</h2>
+        <h2 className='text-center pt-1 text-2xl font-bold tracking-tight text-gray-700'>Welcome to ({childAddress})Warehouse</h2>
        <div>
-          <h2>Manage your Warehouse Seamlessly</h2>
-          <div class="grid gap-6 p-4 mb-6 md:grid-cols-3">
+          <h2 class='p-2 text-center font-serif text-3xl font-bold tracking-tight text-sky-500'>Manage your Warehouse Seamlessly</h2>
+          <div className='p-10'>
+
+          <div class="grid gap-6 p-3 m-2  md:grid-cols-5 border rounded-lg   ">
           <input
         type="text"
         placeholder="Enter data"
@@ -367,38 +388,109 @@ const { write } = useContractWrite(addDataconfig)*/}
 
       
           <br></br>
-          <div class="grid gap-6 p-4 mb-6 md:grid-cols-3">
+
+          <div class="grid gap-6 p-3 m-2 md:grid-cols-5  border rounded-lg 	">
           <input
         type="number"
         placeholder="Enter id"
-        value={id}
-        onChange={(e) => setId(e.target.value)}
-        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required
+        value={rid}
+        onChange={(e) => setrId(e.target.value)}
+        class="bg-gray-50 border col-start-2 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required
         />
-          <button class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={handleRemoveData} > Remove Data</button>
+          <button class=" text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm py-2.5  text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={handleRemoveData} > Remove Data</button>
           </div>
 
 
           <br></br>
-          <button class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"  >Add Staff</button>
+          
+
           <br></br>
-          <button class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" >
-            Remove Staff
+          
+          <div class="grid gap-6 p-3 m-2  md:grid-cols-5 border rounded-lg   ">
+       
+          <input
+        type="text"
+        placeholder="Enter Manager's Address" 
+        value={addmanager}
+        onChange={(e) => setaddManager(e.target.value)}
+        
+         class="bg-gray-50 border border-gray-300 text-gray-900 col-span-2 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+
+        />
+          
+
+          <button class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" 
+          onClick={handleaddManager} > 
+          Add Manager
           </button>
+       
+          
+          </div>
+
           <br></br>
-          <button class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" >
-            Add Manager
-          </button>
-          <br></br>
-          <button class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"  >
+
+          <div class="grid gap-6 p-3 m-2  md:grid-cols-5 border rounded-lg   ">
+          <input
+        type="text"
+        placeholder="Enter Manager's Address" 
+        value={removemanager}
+        onChange={(e) => setremoveManager(e.target.value)}
+        
+         class="bg-gray-50 border border-gray-300 col-span-2 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+
+        />
+
+          <button class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" 
+          onClick={handleremoveManager}
+           >
             Remove Manager
           </button>
+          </div>
           <br></br>
-          <p>Manager: {manager}</p>
+
+          <div class="grid gap-6 p-3 m-2  md:grid-cols-5 border rounded-lg   ">
+          <input
+        type="text"
+        placeholder="Enter Staff's Address" 
+        value={addstaff}
+        onChange={(e) => setaddStaff(e.target.value)}
+        
+         class="bg-gray-50 border border-gray-300 text-gray-900 col-span-2 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+
+        />
+
+          <button class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          onClick={handleaddStaff}  >Add Staff</button>
+          </div>
+
+          <br></br>
+
+          <div class="grid gap-6 p-3 m-2  md:grid-cols-5 border rounded-lg   ">
+          <input
+        type="text"
+        placeholder="Enter Staff's Address" 
+        value={removestaff}
+        onChange={(e) => setremoveStaff(e.target.value)}
+        
+         class="bg-gray-50 border border-gray-300 text-gray-900 col-span-2 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+
+        />
+          <button class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          onClick={handleremoveStaff} >
+            Remove Staff
+          </button>
+          </div>
+
+          <br></br>
+          </div>
+          
   </div>
       
-        <h2>Please install MetaMask to use this application</h2>
-      
+  <ToastContainer position="bottom-right"
+autoClose={3500}
+hideProgressBar={false}
+newestOnTop={false}
+closeOnClick />
     </div>
   );
 };
