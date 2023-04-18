@@ -14,9 +14,7 @@ const Navbar = () => {
         <li>
           <Link to="/ManageWarehouse"> Manage Warehouse</Link>
         </li>
-        <li>
-          <Link to="/CheckData"> Check Data</Link>
-        </li>
+        
       </ul>
       <div    style={{
       display: 'flex',

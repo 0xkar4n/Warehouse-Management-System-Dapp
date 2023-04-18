@@ -1,24 +1,17 @@
+import React, { useState } from 'react';
 import { useAccount } from 'wagmi';
 
-import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from 'wagmi';
+import Web3 from "web3";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 export default function Home(){
   const { address, isConnecting, isDisconnected } = useAccount()
-  const fabi = [
-    {
-      "inputs": [],
-      "name": "create_wareshouse",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
+  const [name, setName] = useState('');
+  const [isCreating, setIsCreating] = useState(false);
+  const createWarehouseAddress='0x31b91a4816e09fc40d666478efa18e22afd69ba6';
+  const createWarehouseAbi=[
     {
       "anonymous": false,
       "inputs": [
@@ -47,17 +40,12 @@ export default function Home(){
     {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
         }
       ],
-      "name": "deployedContracts",
+      "name": "create_wareshouse",
       "outputs": [
         {
           "internalType": "address",
@@ -65,35 +53,76 @@ export default function Home(){
           "type": "address"
         }
       ],
-      "stateMutability": "view",
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
       "inputs": [
         {
           "internalType": "address",
-          "name": "wallet",
+          "name": "_owner",
           "type": "address"
         }
       ],
-      "name": "getDeployedContracts",
+      "name": "getWarehousesByOwner",
       "outputs": [
         {
-          "internalType": "address[]",
+          "components": [
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "warehouseAddress",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct Create_Warehouse.warehouse[]",
           "name": "",
-          "type": "address[]"
+          "type": "tuple[]"
         }
       ],
       "stateMutability": "view",
       "type": "function"
     }
   ];
-  const { config,error } = usePrepareContractWrite({
-    address: '0x3438aa469f1bd4f5ff629dac013851410745c159',
-    abi: fabi,
-    functionName: 'create_wareshouse',
-  })
-  const {data, isError, isLoading,isSuccess, write } = useContractWrite(config)
+
+ 
+
+  
+  const [popupVisible, setPopupVisible] = useState(false);
+  const handleCreate = async () => {
+    if (!name) {
+      toast.error('Please enter a name for the warehouse.');
+      return;
+    }
+
+    try {
+      setIsCreating(true);
+
+      // Get the current user's address from their wallet
+      const web3 = new Web3(window.ethereum);
+      const accounts = await web3.eth.getAccounts();
+      const userAddress = accounts[0];
+
+      // Get the contract instance and call the create_warehouse function
+      const contractAddress = '0x31b91a4816e09fC40d666478Efa18E22AFd69ba6';
+      const contractAbi = createWarehouseAbi;
+      const contract = new web3.eth.Contract(contractAbi, contractAddress);
+      const result = await contract.methods.create_wareshouse(name).send({ from: userAddress });
+
+      // Notify the user of the success and reset the form
+      toast.success('Warehouse created successfully!');
+      setIsCreating(false);
+      setName('');
+    } catch (error) {
+      // Notify the user of any errors
+      toast.error(`Error creating warehouse: ${error.message}`);
+      setIsCreating(false);
+    }
+  };
 
 
 
@@ -130,45 +159,38 @@ export default function Home(){
         <p className="text-left mt-2 pl-5 text-gray-600  font-sherif ">
             Explore the Blockchain world. Create and manage warehouses easily.
           </p>
+
+          <div>
+  <button className="bg-blue-500 text-white py-2 px-4 rounded-lg" onClick={() => setPopupVisible(true)}>Create Warehouse</button>
+  {popupVisible && (
+    <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center" onClick={() => setPopupVisible(false)}>
+      <div className="bg-white rounded-lg shadow-lg p-4" onClick={(event) => event.stopPropagation()}>
+        <h2 className="text-lg font-bold mb-4">Create Warehouse</h2>
+        <input
+          type="text"
+          placeholder="Warehouse Name"
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          className="border border-gray-400 rounded-lg px-4 py-2 mb-4 w-full"
+        />
+        <button onClick={handleCreate} className="bg-blue-500 text-white py-2 px-4 rounded-lg">
+          Create
+        </button>
+      </div>
+    </div>
+
+
+      )}
+      <ToastContainer />
+    </div>
         <br>
         </br>
       
         
-        <button  type="button" class="text-white pl-5 ml-5 text-left bg-sky-500 hover:bg-sky-600 font-medium rounded-lg text-sm px-5 py-2.5 " disabled={!write || isLoading} onClick={() => write?.() } >{isLoading ? 'Creating...' : 'Create Warehouse'} </button>
-        {isSuccess && (
-        <div id="toast-success" class="absolute bottom-5 left-5 flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800" role="alert">
-        <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200">
-            <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-            <span class="sr-only">Check icon</span>
-        </div>
-        <div class="ml-3 text-sm font-normal">Warehouse Created Succesfully</div>
-        <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700" data-dismiss-target="#toast-success" aria-label="Close">
-            <span class="sr-only">Close</span>
-            <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-        </button>
-    </div>)}
-        {isLoading && (
-         <div id="toast-interactive" class="absolute bottom-5 left-5 w-full max-w-xs p-3 text-gray-500 bg-white rounded-lg shadow dark:bg-gray-800 dark:text-gray-400" role="alert">
-         <div class="flex">
-             <div class="inline-flex items-center justify-center flex-shrink-0 w-6 h-6 text-blue-500 bg-blue-100 rounded-lg dark:text-blue-300 dark:bg-blue-900">
-                 <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"></path></svg>
-                 <span class="sr-only">Refresh icon</span>
-             </div>
-             <div class="ml-3 text-sm font-normal">
-                 <span class="mb-1 text-sm font-semibold text-gray-900 dark:text-white">Transaction is in process</span>
-                 
-             </div>
-             <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700" data-dismiss-target="#toast-interactive" aria-label="Close">
-                 <span class="sr-only">Close</span>
-                 <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-             </button>
-
-             
+        
 
 
-         </div>
-     </div>
-        )}
+       
 
       
 
